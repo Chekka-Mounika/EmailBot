@@ -4,8 +4,8 @@ from base64 import b64encode
 import pandas as pd
 
 # Email and SMTP server details
-userEmail = "bugreport.bloodhelp@gmail.com"
-userPassword = "noxowkskenumovth"
+userEmail = "useremail@gmail.com"
+userPassword = "password"
 mailserver = 'smtp.gmail.com'
 
 # Email content

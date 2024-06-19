@@ -10,7 +10,7 @@
 7. [Installation](#installation)
 8. [Configuration](#configuration)
 9. [Usage](#usage)
-
+10. [Screenshots](#screen)
 
 ---
 
@@ -70,6 +70,7 @@ This Bot uses SMTP protocols from scratch and sends emails to the testers. The e
   -mailserver = 'smtp.gmail.com'
 2. Ensure that your Excel file with contact information is named contacts.xlsx and is placed in the same directory as the script.
 
+---
 
 ### Usage
 1. Run the script
@@ -77,5 +78,11 @@ This Bot uses SMTP protocols from scratch and sends emails to the testers. The e
    python email_bot.py
 2. Enter the subject and body of the email when prompted.
 3. The bot will read the contact information from contacts.xlsx and send emails accordingly.
+
+---
+
+### screen
+1. ScreenShot
+![Remainders sent sucessfully](screenshots/run.png)
 
 

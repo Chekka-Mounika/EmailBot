@@ -147,7 +147,7 @@ This Bot uses SMTP protocols from scratch and sends emails to the testers. The e
 
 2. Function to Send Email
    - The send_email function handles the process of sending an email to a single recipient.
-  ```bash
+  ```python
     def send_email(sslClientSocket, userDestinationEmail, userSubject, msg):
       mailFromCommand = f"MAIL FROM: <{userEmail}>\r\n"
       sslClientSocket.send(mailFromCommand.encode())
@@ -165,6 +165,8 @@ This Bot uses SMTP protocols from scratch and sends emails to the testers. The e
       print(recv4)
 
       sslClientSocket.send(f"Subject: {userSubject}\r\n\r\n{msg}\r\n.\r\n".encode())
+  ```
+
 3. ------------------
 - mailFromCommand: Sends the MAIL FROM command to the SMTP server.
 - rcptToCommand: Sends the RCPT TO command to specify the recipient's email address.

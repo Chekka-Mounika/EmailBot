@@ -10,7 +10,7 @@
 7. [Installation](#installation)
 8. [Configuration](#configuration)
 9. [Usage](#usage)
-10. [Code description](#description)
+10. [Code description](#code-description)
 11. [Screenshots](#screenshots)
 
 ---
@@ -85,93 +85,45 @@ This Bot uses SMTP protocols from scratch and sends emails to the testers. The e
 ![Screenshot](screenshots/run.png)
 
 ---
-### description
-1. Establishing Connection and Sending Emails
-   The script establishes a connection to the SMTP server, performs the necessary authentication, and iterates through each contact to send emails.
+### Code description
+---
+### Import Libraries
+1. Everything about libraries used
+     ```bash
+         `socket` and `ssl`: For creating secure connections to the SMTP server.
+         `b64encode` from `base64`: For encoding email and password in base64.
+         `pandas`: For reading the Excel file containing the email addresses.
+         `time`: For adding pauses between email batches.
+         `logging`: For logging the email sending process.
+         `tenacity`: For retrying failed email attempts.
+         `threading`: For sending emails concurrently in batches.
+---
+### Configuration
+1. Credentials required for this bot:
+    ```bash
+       `userEmail`, `userPassword`, `userSubject`, and `userBody`: Store email credentials and message details.
+       `contacts`: Reads the Excel file containing the list of recipient email addresses.
+       `mailserver` and `port`: SMTP server settings.
+---
+### Sending Email Function
+1. Function to send an email
+    ```bash
+       The `send_email` function sends an email using SMTP. It retries up to three times with a two-second wait between attempts in case of failures.
+2. Sending emails in batch function
+    ```bash
+      The `send_emails_in_batch` function sends emails concurrently in batches using threading.
+3. Main Execution
+    ```bash
+      The script sends emails in batches of 10 with a 5-second pause between batches to avoid overwhelming the server.
+4. Logging
    ```bash
-   try:
-     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-     clientSocket.connect((mailserver, 587))  # 587 is the default port for SMTP with TLS/STARTTLS
-
-     recv = clientSocket.recv(1024).decode()
-     print(recv)
-     if recv[:3] != '220':
-        print('220 reply not received from server.')
-
-     heloCommand = 'HELO Alice\r\n'
-     clientSocket.send(heloCommand.encode())
-     recv1 = clientSocket.recv(1024).decode()
-     print(recv1)
-     if recv1[:3] != '250':
-        print('250 reply not received from server.')
-
-     clientSocket.send("STARTTLS\r\n".encode())
-     recv2 = clientSocket.recv(1024).decode()
-     print(recv2)
-    
-    # Create SSL context and wrap the socket
-     context = ssl.create_default_context()
-     sslClientSocket = context.wrap_socket(clientSocket, server_hostname=mailserver)
-
-     sslClientSocket.send("AUTH LOGIN\r\n".encode())
-     print(sslClientSocket.recv(1024))
-     sslClientSocket.send(b64encode(userEmail.encode()) + "\r\n".encode())
-     print(sslClientSocket.recv(1024))
-     sslClientSocket.send(b64encode(userPassword.encode()) + "\r\n".encode())
-     print(sslClientSocket.recv(1024))
-
-    # Loop through each contact and send the email
-     for index, contact in contacts.iterrows():
-        userDestinationEmail = contact['Email']
-        print(f"Sending email to {userDestinationEmail}")
-        try:
-            send_email(sslClientSocket, userDestinationEmail, userSubject, msg)
-        except Exception as e:
-            print(f"Failed to send email to {userDestinationEmail}. Error: {e}")
-
-     quitCommand = "QUIT\r\n"
-     sslClientSocket.send(quitCommand.encode())
-     recv5 = sslClientSocket.recv(1024).decode()
-     print(recv5)
-     sslClientSocket.close()
-   
-  except Exception as e:
-    print(f"An error occurred: {e}")
-- Socket Connection: Establishes a connection to the SMTP server on port 587.
-- HELO Command: Sends the HELO command to the server.
-- STARTTLS: Upgrades the connection to use TLS.
-- SSL Context: Wraps the socket with SSL for secure communication.
-- Authentication: Sends the AUTH LOGIN command followed by the base64-encoded email and password for authentication.
-- Email Loop: Iterates through each contact in the Excel file and calls send_email to send the email.
-- QUIT Command: Sends the QUIT command to terminate the connection.
-
-2. Function to Send Email
-   - The send_email function handles the process of sending an email to a single recipient.
-  ```python
-    def send_email(sslClientSocket, userDestinationEmail, userSubject, msg):
-      mailFromCommand = f"MAIL FROM: <{userEmail}>\r\n"
-      sslClientSocket.send(mailFromCommand.encode())
-      recv2 = sslClientSocket.recv(1024).decode()
-      print(recv2)
-
-      rcptToCommand = f"RCPT TO: <{userDestinationEmail}>\r\n"
-      sslClientSocket.send(rcptToCommand.encode())
-      recv3 = sslClientSocket.recv(1024).decode()
-      print(recv3)
-
-      dataCommand = "DATA\r\n"
-      sslClientSocket.send(dataCommand.encode())
-      recv4 = sslClientSocket.recv(1024).decode()
-      print(recv4)
-
-      sslClientSocket.send(f"Subject: {userSubject}\r\n\r\n{msg}\r\n.\r\n".encode())
-  ```
-
-3. ------------------
-- mailFromCommand: Sends the MAIL FROM command to the SMTP server.
-- rcptToCommand: Sends the RCPT TO command to specify the recipient's email address.
-- dataCommand: Initiates the transfer of the email data.
-- Email Content: Sends the subject and body of the email.
+      The script logs the email sending process and errors in the `email_bot.log` file.
+5. Note
+   ```bash
+     Ensure that you have enabled "Less secure app access" for your Gmail account to allow the script to send emails.
+6. Security Warning
+   ```bash
+     Storing your email password in plain text within the script is not secure. Consider using environment variables or a more secure method to handle your credentials. 
 
 ---
 
